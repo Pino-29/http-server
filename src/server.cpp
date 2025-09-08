@@ -1,10 +1,11 @@
 #include "bind_socket.h"
 #include "create_socket.h"
 
+#include <cstring>
 #include <iostream>
-#include <unistd.h>
-#include <sys/socket.h>
 #include <netdb.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 int main(int argc, char **argv) {
   // Flush after every std::cout / std::cerr
