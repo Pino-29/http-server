@@ -47,8 +47,12 @@ int main(int argc, char **argv) {
 
   std::cout << "Waiting for a client to connect...\n";
 
-  accept(serverFD, reinterpret_cast<struct sockaddr*>(&clientAddr), reinterpret_cast<socklen_t *>(&clientAddrLen));
+  int clientFD { accept(serverFD, reinterpret_cast<struct sockaddr*>(&clientAddr), reinterpret_cast<socklen_t *>(&clientAddrLen)) };
+
   std::cout << "Client connected\n";
+
+  const char* response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nHello, world!";
+  send(clientFD, response, strlen(response), 0);
 
   close(serverFD);
   return 0;
