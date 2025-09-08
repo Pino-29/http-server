@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 
   std::cout << "Client connected\n";
 
-  const char* response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nHello, world!";
+  const char* response = "HTTP/1.1 200 OK\r\n\r\n";
   send(clientFD, response, strlen(response), 0);
 
   close(serverFD);
