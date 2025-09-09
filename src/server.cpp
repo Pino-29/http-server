@@ -1,6 +1,7 @@
 #include "bind_socket.hpp"
 #include "create_socket.hpp"
-#include "header_line_parts.hpp"
+#include "request_line.hpp"
+#include "request.h"
 
 #include <cassert>
 #include <iostream>
@@ -41,7 +42,7 @@ std::vector<std::string> splitBySpace(const std::string& input) {
   return result;
 }
 
-std::vector<std::string> getRequestLine(const Buffer &buffer)
+http::RequestLine getRequestLine(const Buffer &buffer)
 {
   std::istringstream iss { buffer };
   std::string line;
@@ -56,12 +57,16 @@ std::vector<std::string> getRequestLine(const Buffer &buffer)
     throw std::runtime_error("Invalid request line");
   }
 
-  return requestLine;
+  http::RequestLine request{};
+  request.method = http::parseMethod(requestLine[0]);
+  request.target = requestLine[1];
+  request.version = http::parseVersion(requestLine[2]);
+  return request;
 }
 
 void sendResponse(const int& clientFD, const Buffer& buffer)
 {
-  std::vector<std::string> requestLine{};
+  http::RequestLine requestLine{};
   try
   {
      requestLine = std::move(getRequestLine(buffer));
@@ -77,11 +82,11 @@ void sendResponse(const int& clientFD, const Buffer& buffer)
 
   std::string_view response = "HTTP/1.1 200 OK\r\n\r\n";
 
-  constexpr size_t target { static_cast<size_t>(RequestLineParts::kTarget) };
-  std::string_view path { requestLine[target] };
+  // constexpr size_t target { static_cast<size_t>(RequestLineParts::kTarget) };
+  // std::string_view path { requestLine[target] };
 
-  std::cout << "Path: " << path << "\n";
-  if (path != "/")
+  std::cout << "Path: " << requestLine.target << "\n";
+  if (requestLine.target != "/")
   {
     response = "HTTP/1.1 404 Not Found\r\n\r\n";
   }
