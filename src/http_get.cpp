@@ -4,7 +4,9 @@
 
 #include "http_get.hpp"
 
+#include "echo.hpp"
 #include "http_request.hpp"
+#include "user_agent.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -12,7 +14,6 @@
 #include <string_view>
 #include <sys/socket.h>
 
-#include "echo.hpp"
 
 namespace http::get
 {
@@ -28,6 +29,10 @@ namespace http::get
         else if (request.target.starts_with("/echo/"))
         {
             response = endpoint::echo(request);
+        }
+        else if (request.target.starts_with("/user-agent/"))
+        {
+            response = endpoint::userAgent(request);
         }
         else // random unknown path
         {

@@ -89,8 +89,7 @@ namespace http
 
     void parseLineHelper(Request& parseRequest, std::istringstream& iss)
     {
-        std::string method;
-        if (iss >> method) {
+        if (std::string method; iss >> method) {
             try {
                 parseRequest.method = parseMethod(method);
             } catch (const std::exception& e) {
@@ -103,17 +102,15 @@ namespace http
         }
         std::cout << "Method: " << parseRequest.method << "\n";
 
-        std::string target;
-        if (iss >> target) {
-            parseRequest.target = std::move(target);
+        if (std::string target; iss >> target) {
+            parseRequest.target = std::move(target) + '/';
         } else {
             std::cerr << "Error: Failed to extract target from stream\n";
             throw std::runtime_error("Stream extraction failed for HTTP target");
         }
         std::cout << "Target: " << parseRequest.target << "\n";
 
-        std::string version;
-        if (iss >> version) {
+        if (std::string version; iss >> version) {
             try {
                 parseRequest.version = parseVersion(version);
             } catch (const std::exception& e) {
@@ -131,15 +128,53 @@ namespace http
         }
     }
 
+    void parseHeadersHelper(Request& request, std::istringstream& iss) {
+        std::string line;
+
+        auto trim = [](std::string& s) {
+            s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](const unsigned char& ch) {
+                return !std::isspace(ch);
+            }));
+            s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+                return !std::isspace(ch);
+            }).base(), s.end());
+        };
+
+        while (std::getline(iss, line)) {
+            // Handle CRLF endings
+            if (!line.empty() && line.back() == '\r') {
+                line.pop_back();
+            }
+
+            // End of headers (empty line)
+            if (line.empty()) {
+                break;
+            }
+
+            const auto colonPos = line.find(':');
+            if (colonPos == std::string::npos) {
+                throw std::runtime_error("Malformed header (missing colon)");
+            }
+
+            std::string name = line.substr(0, colonPos);
+            std::string value = line.substr(colonPos + 1);
+
+            trim(name);
+            trim(value);
+
+            request.headers[name] = value;
+            std::cout << "Header: [" << name << "] = [" << value << "]\n";
+        }
+    }
+
     Request parseRequest(const std::string& request)
     {
         Request parsedRequest{};
 
         std::istringstream iss { request };
         parseLineHelper(parsedRequest, iss);
-        // TODO
-        // parse headers and body
-
+        parseHeadersHelper(parsedRequest, iss);
+        // TODO: parse body
         return parsedRequest;
     }
 }
