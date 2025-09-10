@@ -15,17 +15,18 @@ namespace http
 {
     std::string toString(const Method& method)
     {
-        switch (method) {
-            case Method::GET:     return "GET";
-            case Method::POST:    return "POST";
-            case Method::PUT:     return "PUT";
-            case Method::DELETE:  return "DELETE";
-            case Method::HEAD:    return "HEAD";
+        switch (method)
+        {
+            case Method::GET: return "GET";
+            case Method::POST: return "POST";
+            case Method::PUT: return "PUT";
+            case Method::DELETE: return "DELETE";
+            case Method::HEAD: return "HEAD";
             case Method::OPTIONS: return "OPTIONS";
-            case Method::TRACE:   return "TRACE";
+            case Method::TRACE: return "TRACE";
             case Method::CONNECT: return "CONNECT";
-            case Method::PATCH:   return "PATCH";
-            default:              return "UNKNOWN";
+            case Method::PATCH: return "PATCH";
+            default: return "UNKNOWN";
         }
     }
 
@@ -35,13 +36,14 @@ namespace http
         {
             case Version::HTTP_1_0: return "HTTP/1.0";
             case Version::HTTP_1_1: return "HTTP/1.1";
-            case Version::HTTP_2:   return "HTTP/2";
-            case Version::HTTP_3:   return "HTTP/3";
-            default:                return "UNKNOWN";
+            case Version::HTTP_2: return "HTTP/2";
+            case Version::HTTP_3: return "HTTP/3";
+            default: return "UNKNOWN";
         }
     }
 
-    std::ostream& operator<<(std::ostream& os, const Method& method) {
+    std::ostream& operator<<(std::ostream& os, const Method& method)
+    {
         return os << toString(method);
     }
 
@@ -50,7 +52,8 @@ namespace http
         return os << toString(version);
     }
 
-    Method parseMethod(const std::string& methodStr) {
+    Method parseMethod(const std::string& methodStr)
+    {
         if (methodStr == "GET") return Method::GET;
         if (methodStr == "POST") return Method::POST;
         if (methodStr == "PUT") return Method::PUT;
@@ -75,13 +78,18 @@ namespace http
 
     [[nodiscard]] bool isCRLFNext(std::istringstream& iss)
     {
-        char first{}, second{};
-        if (iss.get(first) && iss.get(second)) {
-            if (first != '\r' || second != '\n') {
+        char first {};
+        char second {};
+        if (iss.get(first) && iss.get(second))
+        {
+            if (first != '\r' || second != '\n')
+            {
                 std::cerr << "Unexpected line ending: '" << first << " " << second << "\n";
                 return false;
             }
-        } else {
+        }
+        else
+        {
             throw std::invalid_argument("Invalid request line: stream failed before \\r\\n");
         }
 
@@ -90,74 +98,98 @@ namespace http
 
     void parseLineHelper(Request& parseRequest, std::istringstream& iss)
     {
-        if (std::string method; iss >> method) {
-            try {
+        if (std::string method; iss >> method)
+        {
+            try
+            {
                 parseRequest.method = parseMethod(method);
-            } catch (const std::exception& e) {
+            }
+            catch (const std::exception& e)
+            {
                 std::cerr << "Error: " << e.what() << "\nFailed to parse method\n";
                 throw;
             }
-        } else {
+        }
+        else
+        {
             std::cerr << "Error: Failed to extract method from stream\n";
             throw std::runtime_error("Stream extraction failed for HTTP method");
         }
         std::cout << "Method: " << parseRequest.method << "\n";
 
-        if (std::string target; iss >> target) {
+        if (std::string target; iss >> target)
+        {
             parseRequest.target = std::move(target);
             if (parseRequest.target.empty() || parseRequest.target.back() != '/')
             {
                 parseRequest.target.push_back('/');
             }
-        } else {
+        }
+        else
+        {
             std::cerr << "Error: Failed to extract target from stream\n";
             throw std::runtime_error("Stream extraction failed for HTTP target");
         }
         std::cout << "Target: " << parseRequest.target << "\n";
 
-        if (std::string version; iss >> version) {
-            try {
+        if (std::string version; iss >> version)
+        {
+            try
+            {
                 parseRequest.version = parseVersion(version);
-            } catch (const std::exception& e) {
+            }
+            catch (const std::exception& e)
+            {
                 std::cerr << "Error: " << e.what() << "\nFailed to parse version\n";
                 throw;
             }
-        } else {
+        }
+        else
+        {
             std::cerr << "Error: Failed to extract version from stream\n";
             throw std::runtime_error("Stream extraction failed for HTTP version");
         }
         std::cout << "Version: " << parseRequest.version << "\n";
 
-        if (!isCRLFNext(iss)) {
+        if (!isCRLFNext(iss))
+        {
             throw std::runtime_error("Failed to read CRLF");
         }
     }
 
-    void parseHeadersHelper(Request& request, std::istringstream& iss) {
+    void parseHeadersHelper(Request& request, std::istringstream& iss)
+    {
         std::string line;
 
-        auto trim = [](std::string& s) {
-            s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](const unsigned char& ch) {
+        auto trim = [](std::string& s)
+        {
+            s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](const unsigned char& ch)
+            {
                 return !std::isspace(ch);
             }));
-            s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+            s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch)
+            {
                 return !std::isspace(ch);
             }).base(), s.end());
         };
 
-        while (std::getline(iss, line)) {
+        while (std::getline(iss, line))
+        {
             // Handle CRLF endings
-            if (!line.empty() && line.back() == '\r') {
+            if (!line.empty() && line.back() == '\r')
+            {
                 line.pop_back();
             }
 
             // End of headers (empty line)
-            if (line.empty()) {
+            if (line.empty())
+            {
                 break;
             }
 
             const auto colonPos = line.find(':');
-            if (colonPos == std::string::npos) {
+            if (colonPos == std::string::npos)
+            {
                 throw std::runtime_error("Malformed header (missing colon)");
             }
 
@@ -174,7 +206,7 @@ namespace http
 
     Request parseRequest(const std::string& request)
     {
-        Request parsedRequest{};
+        Request parsedRequest {};
 
         std::istringstream iss { request };
         parseLineHelper(parsedRequest, iss);

@@ -21,7 +21,7 @@ namespace http::get::endpoint
             echoString.remove_suffix(1); // removes /
         }
 
-        std::string response{};
+        std::string response {};
         response += "HTTP/1.1 200 OK";
         response += "\r\n";
         // headers

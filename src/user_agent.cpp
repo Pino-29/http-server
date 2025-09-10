@@ -15,7 +15,7 @@ namespace http::get::endpoint
     std::string userAgent(const Request& request)
     {
         const std::string body { request.getHeader("User-Agent") };
-        std::string response{};
+        std::string response {};
         // status line
         response += "HTTP/1.1 200 OK";
         response += "\r\n";

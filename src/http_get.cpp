@@ -11,7 +11,6 @@
 #include <cassert>
 #include <iostream>
 #include <string>
-#include <string_view>
 #include <sys/socket.h>
 
 
@@ -21,7 +20,7 @@ namespace http::get
     {
         assert(request.method == Method::GET);
 
-        std::string response{};
+        std::string response {};
         if (request.target == "/")
         {
             response = "HTTP/1.1 200 OK\r\n\r\n";
