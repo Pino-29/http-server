@@ -12,7 +12,6 @@
 #include <iostream>
 #include <string>
 #include <sys/socket.h>
-// #include <vector>
 #include <sstream>
 #include <unistd.h>
 
@@ -21,12 +20,10 @@ namespace http::get
     std::string getEndpoint(const std::string& input)
     {
         std::stringstream ss(input);
-        std::string token;
+        std::string token {};
 
-        if (!ss.ignore() || !std::getline(ss, token, '/'))
-        {
-            throw std::invalid_argument("Error while extracting endpoint: " + input);
-        }
+        ss.ignore(1, '/');
+        !std::getline(ss, token, '/');
 
         return token;
     }
@@ -37,7 +34,7 @@ namespace http::get
         std::string endpoint { getEndpoint(request.target) };
         std::string response {};
 
-        if (endpoint  == "/")
+        if (endpoint.empty())
         {
             response = "HTTP/1.1 200 OK\r\n\r\n";
         }
