@@ -7,8 +7,8 @@
 
 #include "http_request.hpp"
 
-namespace http
+namespace http::get
 {
-    void processGetRequest(const size_t& clientFD, const Request& request);
+    void processRequest(const size_t& clientFD, const Request& request);
 }
 #endif //HTTP_SERVER_STARTER_CPP_GET_H

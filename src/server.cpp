@@ -66,7 +66,7 @@ void handleResponse(const int& clientFD, const http::Request& request)
   // Safe & Idempotent Methods
   if (request.method == http::Method::GET)
   {
-    http::processGetRequest(clientFD, request);
+    http::get::processRequest(clientFD, request);
   }
   else if (request.method == http::Method::HEAD)
   {
