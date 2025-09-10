@@ -120,10 +120,10 @@ namespace http
         if (std::string target; iss >> target)
         {
             parseRequest.target = std::move(target);
-            if (parseRequest.target.empty() || parseRequest.target.back() != '/')
-            {
-                parseRequest.target.push_back('/');
-            }
+            // if (parseRequest.target.empty() || parseRequest.target.back() != '/')
+            // {
+            //     parseRequest.target.push_back('/');
+            // }
         }
         else
         {

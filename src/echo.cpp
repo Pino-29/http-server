@@ -3,7 +3,6 @@
 //
 #include "echo.hpp"
 
-#include <iostream>
 #include <ostream>
 
 #include "http_request.hpp"
@@ -12,13 +11,18 @@
 
 namespace http::get::endpoint
 {
+    std::string emptyReply()
+    {
+        return "HTTP/1.1 200 OK\r\n\r\n";
+    }
+
     std::string echo(const Request& request)
     {
         std::string_view echoString = request.target;
-        echoString.remove_prefix(6); // removes /echo/
-        if (!echoString.empty())
+        constexpr std::string_view prefix { "/echo/" };
+        if (!echoString.starts_with(prefix)  || echoString.size() == prefix.size())
         {
-            echoString.remove_suffix(1); // removes /
+            return emptyReply();
         }
 
         std::string response {};

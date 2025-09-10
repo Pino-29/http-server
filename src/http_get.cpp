@@ -12,24 +12,40 @@
 #include <iostream>
 #include <string>
 #include <sys/socket.h>
-
+// #include <vector>
+#include <sstream>
+#include <unistd.h>
 
 namespace http::get
 {
+    std::string getEndpoint(const std::string& input)
+    {
+        std::stringstream ss(input);
+        std::string token;
+
+        if (!ss.ignore() || !std::getline(ss, token, '/'))
+        {
+            throw std::invalid_argument("Error while extracting endpoint: " + input);
+        }
+
+        return token;
+    }
+
     void processRequest(const size_t& clientFD, const Request& request)
     {
         assert(request.method == Method::GET);
-
+        std::string endpoint { getEndpoint(request.target) };
         std::string response {};
-        if (request.target == "/")
+
+        if (endpoint  == "/")
         {
             response = "HTTP/1.1 200 OK\r\n\r\n";
         }
-        else if (request.target.starts_with("/echo/"))
+        else if (endpoint == "echo")
         {
             response = endpoint::echo(request);
         }
-        else if (request.target.starts_with("/user-agent/"))
+        else if (endpoint == "user-agent")
         {
             response = endpoint::userAgent(request);
         }
