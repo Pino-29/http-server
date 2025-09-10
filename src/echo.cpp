@@ -10,7 +10,7 @@
 
 #include <string>
 
-namespace http::get
+namespace http::get::endpoint
 {
     std::string echo(const Request& request)
     {

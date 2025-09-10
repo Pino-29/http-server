@@ -27,7 +27,7 @@ namespace http::get
         }
         else if (request.target.starts_with("/echo/"))
         {
-            response = get::echo(request);
+            response = endpoint::echo(request);
         }
         else // random unknown path
         {
