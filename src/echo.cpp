@@ -20,11 +20,12 @@ namespace http::get::endpoint
     {
         std::string_view echoString = request.target;
         constexpr std::string_view prefix { "/echo/" };
-        if (!echoString.starts_with(prefix)  || echoString.size() == prefix.size())
+        if (!echoString.starts_with(prefix) || echoString.size() == prefix.size())
         {
             return emptyReply();
         }
 
+        echoString.remove_prefix(prefix.size());
         std::string response {};
         response += "HTTP/1.1 200 OK";
         response += "\r\n";
