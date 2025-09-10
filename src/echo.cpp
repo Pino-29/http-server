@@ -16,6 +16,10 @@ namespace http::get::endpoint
     {
         std::string_view echoString = request.target;
         echoString.remove_prefix(6); // removes /echo/
+        if (!echoString.empty())
+        {
+            echoString.remove_suffix(1); // removes /
+        }
 
         std::string response{};
         response += "HTTP/1.1 200 OK";

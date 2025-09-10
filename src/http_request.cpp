@@ -4,6 +4,7 @@
 
 #include "http_request.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -103,7 +104,11 @@ namespace http
         std::cout << "Method: " << parseRequest.method << "\n";
 
         if (std::string target; iss >> target) {
-            parseRequest.target = std::move(target) + '/';
+            parseRequest.target = std::move(target);
+            if (parseRequest.target.empty() || parseRequest.target.back() != '/')
+            {
+                parseRequest.target.push_back('/');
+            }
         } else {
             std::cerr << "Error: Failed to extract target from stream\n";
             throw std::runtime_error("Stream extraction failed for HTTP target");
