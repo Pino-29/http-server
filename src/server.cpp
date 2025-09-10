@@ -1,7 +1,7 @@
 #include "bind_socket.hpp"
 #include "create_socket.hpp"
-#include "request_line.hpp"
-#include "request.h"
+#include "http_get.hpp"
+#include "http_request.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -11,107 +11,13 @@
 #include <vector>
 #include <sstream>
 
-
 using Buffer = std::string;
 
+void handleResponse(const int& clientFD, const Buffer& buffer);
 
+Buffer readRequest(const int& clientFD);
 
-Buffer readRequest(const int& clientFD)
-{
-  Buffer buffer(1024, '\0');
-  ssize_t bytesReceived = recv(clientFD, buffer.data(), buffer.size(), 0);
-
-  if (bytesReceived == -1)
-  {
-    throw std::runtime_error("Error while reading message");
-  }
-
-  std::cout << "Received " << bytesReceived << " bytes\n";
-  return buffer;
-}
-
-
-std::vector<std::string> splitBySpace(const std::string& input) {
-  std::string word;
-  std::vector<std::string> result;
-  std::istringstream iss { input };
-  while (iss >> word) {
-    result.push_back(word);
-  }
-
-  return result;
-}
-
-http::RequestLine getRequestLine(const Buffer &buffer)
-{
-  std::istringstream iss { buffer };
-  std::string line;
-  std::getline(iss, line, '\r');
-  assert(iss.peek() == '\n');
-  auto requestLine = std::move(splitBySpace(line));
-
-  // TODO
-  // logger.print(requestLine);
-  if (requestLine.size() != 3)
-  {
-    throw std::runtime_error("Invalid request line");
-  }
-
-  http::RequestLine request{};
-  request.method = http::parseMethod(requestLine[0]);
-  request.target = requestLine[1];
-  request.version = http::parseVersion(requestLine[2]);
-  return request;
-}
-
-void sendResponse(const int& clientFD, const Buffer& buffer)
-{
-  http::RequestLine requestLine{};
-  try
-  {
-     requestLine = std::move(getRequestLine(buffer));
-  }
-  catch (const std::exception& e)
-  {
-    std::cerr << "Error: " << e.what() << std::endl;
-    throw;
-  }
-
-  // TODO: add logger
-  // logger.print(requestLine);
-
-  std::string_view response = "HTTP/1.1 200 OK\r\n\r\n";
-
-  // constexpr size_t target { static_cast<size_t>(RequestLineParts::kTarget) };
-  // std::string_view path { requestLine[target] };
-
-  std::cout << "Path: " << requestLine.target << "\n";
-  if (requestLine.target != "/")
-  {
-    response = "HTTP/1.1 404 Not Found\r\n\r\n";
-  }
-
-  send(clientFD, response.data(), response.size(), 0);
-}
-
-void handleConnection(const int& serverFD)
-{
-  struct sockaddr_in clientAddr{};
-  int clientAddrLen { sizeof(clientAddr) };
-
-  std::cout << "Waiting for a client to connect...\n";
-
-  const int clientFD { accept(serverFD, reinterpret_cast<struct sockaddr*>(&clientAddr), reinterpret_cast<socklen_t *>(&clientAddrLen)) };
-
-  std::cout << "Client connected\n";
-  std::cout << "Client address: " << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << "\n";
-  std::cout << "Client address length: " << clientAddrLen << "\n";
-  std::cout << "Client address family: " << clientAddr.sin_family << "\n";
-  std::cout << "Client address port: " << clientAddr.sin_port << "\n";
-
-  const Buffer& buffer { readRequest(clientFD) };
-  sendResponse(clientFD, buffer);
-}
+void handleConnection(const int& serverFD);
 
 int main(int argc, char **argv) {
   // Flush after every std::cout / std::cerr
@@ -153,4 +59,95 @@ int main(int argc, char **argv) {
 
   close(serverFD);
   return 0;
+}
+
+void handleResponse(const int& clientFD, const http::Request& request)
+{
+  // Safe & Idempotent Methods
+  if (request.method == http::Method::GET)
+  {
+    http::processGetRequest(clientFD, request);
+  }
+  else if (request.method == http::Method::HEAD)
+  {
+    // intentionally empty
+  }
+  else if (request.method == http::Method::OPTIONS)
+  {
+    // intentionally empty
+  }
+  // Unsafe or State-Changing Methods
+  else if (request.method == http::Method::PUT)
+  {
+    // intentionally empty
+  }
+  else if (request.method == http::Method::POST)
+  {
+    // intentionally empty
+  }
+  else if (request.method == http::Method::PATCH)
+  {
+    // intentionally empty
+  }
+  else if (request.method == http::Method::DELETE)
+  {
+    // intentionally empty
+  }
+  // Authentication & Control-Oriented Methods
+  else if (request.method == http::Method::CONNECT)
+  {
+    // intentionally empty
+  }
+  else if (request.method == http::Method::TRACE)
+  {
+    // intentionally empty
+  } else
+  {
+    std::cerr << "Unknown method: " << request.method << "\n";
+    throw std::runtime_error("Unknown method");
+  }
+}
+
+
+Buffer readRequest(const int& clientFD)
+{
+  Buffer buffer(1024, '\0');
+  ssize_t bytesReceived = recv(clientFD, buffer.data(), buffer.size(), 0);
+
+  if (bytesReceived == -1)
+  {
+    throw std::runtime_error("Error while reading message");
+  }
+
+  std::cout << "Received " << bytesReceived << " bytes\n";
+  return buffer;
+}
+
+void handleConnection(const int& serverFD)
+{
+  struct sockaddr_in clientAddr{};
+  int clientAddrLen { sizeof(clientAddr) };
+
+  std::cout << "Waiting for a client to connect...\n";
+
+  const int clientFD { accept(serverFD, reinterpret_cast<struct sockaddr*>(&clientAddr), reinterpret_cast<socklen_t *>(&clientAddrLen)) };
+
+  std::cout << "Client connected\n";
+  std::cout << "Client address: " << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << "\n";
+  std::cout << "Client address length: " << clientAddrLen << "\n";
+  std::cout << "Client address family: " << clientAddr.sin_family << "\n";
+  std::cout << "Client address port: " << clientAddr.sin_port << "\n";
+
+  http::Request request{};
+  try
+  {
+    const Buffer& buffer { readRequest(clientFD) };
+    request = std::move(http::parseRequest(buffer)) ;
+  } catch (const std::exception& e)
+  {
+    std::cerr << "Error: " << e.what();
+    throw;
+  }
+
+  handleResponse(clientFD, request);
 }
