@@ -130,7 +130,8 @@ Buffer readRequest(const int& clientFD)
 void handleClient(const int& clientFD, const struct sockaddr_in& clientAddr)
 {
     std::cout << "Client connected\n";
-    std::cout << "Client connected from " << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << "\n";
+    std::cout << "Client connected from " << inet_ntoa(clientAddr.sin_addr) << ":"
+            << ntohs(clientAddr.sin_port) << "\n";
     std::cout << "Client address: " << clientAddr.sin_addr.s_addr << "\n";
     std::cout << "Client port: " << ntohs(clientAddr.sin_port) << "\n";
     http::Request request {};
