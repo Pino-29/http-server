@@ -3,13 +3,13 @@
 #include "http_get.hpp"
 #include "http_request.hpp"
 
-#include <cassert>
 #include <iostream>
 #include <netdb.h>
 #include <sys/socket.h>
+#include <sstream>
+#include <thread>
 #include <unistd.h>
 #include <vector>
-#include <sstream>
 
 using Buffer = std::string;
 
@@ -126,24 +126,13 @@ Buffer readRequest(const int& clientFD)
     return buffer;
 }
 
-void handleConnections(const int& serverFD)
+
+void handleClient(const int& clientFD, const struct sockaddr_in& clientAddr)
 {
-    struct sockaddr_in clientAddr {};
-    int clientAddrLen { sizeof(clientAddr) };
-
-    std::cout << "Waiting for a client to connect...\n";
-
-    const int clientFD {
-        accept(serverFD, reinterpret_cast<struct sockaddr *>(&clientAddr),
-               reinterpret_cast<socklen_t *>(&clientAddrLen))
-    };
-
     std::cout << "Client connected\n";
-    std::cout << "Client address: " << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << "\n";
-    std::cout << "Client address length: " << clientAddrLen << "\n";
-    std::cout << "Client address family: " << clientAddr.sin_family << "\n";
-    std::cout << "Client address port: " << clientAddr.sin_port << "\n";
-
+    std::cout << "Client connected from " << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << "\n";
+    std::cout << "Client address: " << clientAddr.sin_addr.s_addr << "\n";
+    std::cout << "Client port: " << ntohs(clientAddr.sin_port) << "\n";
     http::Request request {};
     try
     {
@@ -157,4 +146,23 @@ void handleConnections(const int& serverFD)
     }
 
     handleResponse(clientFD, request);
+    close(clientFD);
+}
+
+void handleConnections(const int& serverFD)
+{
+    while (true)
+    {
+        struct sockaddr_in clientAddr {};
+        int clientAddrLen { sizeof(clientAddr) };
+
+        std::cout << "Waiting for a client to connect...\n";
+
+        const int clientFD {
+            accept(serverFD, reinterpret_cast<struct sockaddr *>(&clientAddr),
+                   reinterpret_cast<socklen_t *>(&clientAddrLen))
+        };
+
+        std::thread(handleClient, clientFD, clientAddr).detach();
+    }
 }
