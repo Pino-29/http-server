@@ -4,6 +4,8 @@
 
 #include "user_agent.hpp"
 
+#include <iostream>
+
 #include "http_request.hpp"
 
 #include <string>
@@ -12,7 +14,7 @@ namespace http::get::endpoint
 {
     std::string userAgent(const Request& request)
     {
-        std::string_view body { request.getHeader("User-Agent") };
+        const std::string body { request.getHeader("User-Agent") };
         std::string response{};
         // status line
         response += "HTTP/1.1 200 OK";
