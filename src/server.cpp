@@ -17,7 +17,7 @@ void handleResponse(const int& clientFD, const Buffer& buffer);
 
 Buffer readRequest(const int& clientFD);
 
-void handleConnection(const int& serverFD);
+void handleConnections(const int& serverFD);
 
 int main(int argc, char **argv)
 {
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    handleConnection(serverFD);
+    handleConnections(serverFD);
 
     close(serverFD);
     return 0;
@@ -126,7 +126,7 @@ Buffer readRequest(const int& clientFD)
     return buffer;
 }
 
-void handleConnection(const int& serverFD)
+void handleConnections(const int& serverFD)
 {
     struct sockaddr_in clientAddr {};
     int clientAddrLen { sizeof(clientAddr) };
