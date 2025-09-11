@@ -4,6 +4,7 @@
 
 #include "files.hpp"
 
+#include "config.hpp"
 #include "http_request.hpp"
 
 #include <filesystem>
@@ -15,7 +16,7 @@ namespace http::get::endpoint
 {
     namespace fs = std::filesystem;
 
-    std::string fileNotFoundCase()
+    std::string fileNotFound()
     {
         return "HTTP/1.1 404 Not Found\r\n\r\n";
     }
@@ -82,11 +83,6 @@ namespace http::get::endpoint
         return response;
     }
 
-    std::string unknownFileType()
-    {
-        return "HTTP/1.1 501 Not Implemented\r\n\r\n";
-    }
-
     fs::path getFilePath(std::string_view target)
     {
         constexpr std::string_view prefix { "/files/" };
@@ -97,11 +93,13 @@ namespace http::get::endpoint
         }
 
         std::string_view filename { target.substr(prefix.size()) };
-        return fs::path("/tmp") / fs::path(filename);
+        fs::path dirPath { Config::instance().get("directory") };
+        return dirPath / fs::path(filename);
     }
 
     std::string files(const Request& request)
     {
+        std::cout << "files\n";
         const fs::path path { getFilePath(request.target) };
         std::cout << "Path: " << path.string() << "\n";
 
@@ -119,6 +117,6 @@ namespace http::get::endpoint
             return fileRequest(path);
         }
 
-        return unknownFileType();
+        return fileNotFound();
     }
 }

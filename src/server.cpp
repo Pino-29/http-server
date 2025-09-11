@@ -1,4 +1,5 @@
 #include "bind_socket.hpp"
+#include "config.hpp"
 #include "create_socket.hpp"
 #include "http_get.hpp"
 #include "http_request.hpp"
@@ -8,6 +9,7 @@
 #include <sys/socket.h>
 #include <sstream>
 #include <thread>
+#include <unordered_map>
 #include <unistd.h>
 #include <vector>
 
@@ -19,8 +21,12 @@ Buffer readRequest(const int& clientFD);
 
 void handleConnections(const int& serverFD);
 
+void parseFlags(int argc, char *argv[]);
+
 int main(int argc, char **argv)
 {
+    parseFlags(argc, argv);
+
     // Flush after every std::cout / std::cerr
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
@@ -111,6 +117,24 @@ void handleResponse(const int& clientFD, const http::Request& request)
     }
 }
 
+
+void parseFlags(int argc, char *argv[])
+{
+    auto& config = Config::instance();
+    for (int i { 1 }; i < argc - 1; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg.starts_with("--"))
+        {
+            std::string key = arg.substr(2);
+            std::string value = argv[i + 1];
+            config.set(key, value);
+            ++i; // Skip the value
+        }
+    }
+
+    config.lock();
+}
 
 Buffer readRequest(const int& clientFD)
 {

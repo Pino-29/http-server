@@ -15,6 +15,8 @@
 #include <sstream>
 #include <unistd.h>
 
+#include "files.hpp"
+
 namespace http::get
 {
     std::string getEndpoint(const std::string& input)
@@ -45,6 +47,10 @@ namespace http::get
         else if (endpoint == "user-agent")
         {
             response = endpoint::userAgent(request);
+        }
+        else if (endpoint == "files")
+        {
+            response = endpoint::files(request);
         }
         else // random unknown path
         {
