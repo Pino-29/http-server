@@ -1,7 +1,7 @@
 //
 // Created by Roberto Jesus Garcia Pino on 08/09/25.
 //
-#include "echo.hpp"
+#include "get/endpoints/echo.hpp"
 
 #include <ostream>
 

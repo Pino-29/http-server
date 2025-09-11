@@ -2,7 +2,7 @@
 // Created by Roberto Jesus Garcia Pino on 10/09/25.
 //
 
-#include "files.hpp"
+#include "get/endpoints/files.hpp"
 
 #include "config.hpp"
 #include "request.hpp"

@@ -2,11 +2,11 @@
 // Created by Roberto Jesus Garcia Pino on 09/09/25.
 //
 
-#include "get.hpp"
+#include "get/get.hpp"
 
-#include "echo.hpp"
+#include "get/endpoints/echo.hpp"
 #include "request.hpp"
-#include "user_agent.hpp"
+#include "get/endpoints/user_agent.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -15,7 +15,7 @@
 #include <sstream>
 #include <unistd.h>
 
-#include "files.hpp"
+#include "get/endpoints/files.hpp"
 
 namespace http::get
 {
