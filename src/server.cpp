@@ -1,8 +1,8 @@
 #include "bind_socket.hpp"
 #include "config.hpp"
 #include "create_socket.hpp"
-#include "http_get.hpp"
-#include "http_request.hpp"
+#include "get.hpp"
+#include "request.hpp"
 
 #include <iostream>
 #include <netdb.h>

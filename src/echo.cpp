@@ -5,7 +5,7 @@
 
 #include <ostream>
 
-#include "http_request.hpp"
+#include "request.hpp"
 
 #include <string>
 

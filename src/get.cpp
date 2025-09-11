@@ -2,10 +2,10 @@
 // Created by Roberto Jesus Garcia Pino on 09/09/25.
 //
 
-#include "http_get.hpp"
+#include "get.hpp"
 
 #include "echo.hpp"
-#include "http_request.hpp"
+#include "request.hpp"
 #include "user_agent.hpp"
 
 #include <cassert>
