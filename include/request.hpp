@@ -40,7 +40,7 @@ namespace http
         std::unordered_map<std::string, std::string> headers{};
 
         // Optional body (for POST, PUT, PATCH, etc.)
-        std::string body{};
+        std::vector<char> body{};
 
         // Optional query parameters (parsed from URI)
         std::unordered_map<std::string, std::string> queryParams{};
