@@ -6,6 +6,7 @@
 
 #include "get/endpoints/echo.hpp"
 #include "request.hpp"
+#include "get/endpoints/files.hpp"
 #include "get/endpoints/user_agent.hpp"
 
 #include <cassert>
@@ -14,8 +15,6 @@
 #include <sys/socket.h>
 #include <sstream>
 #include <unistd.h>
-
-#include "get/endpoints/files.hpp"
 
 namespace http::get
 {
