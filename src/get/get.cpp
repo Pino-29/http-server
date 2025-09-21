@@ -25,7 +25,7 @@ namespace http::get
         std::string token {};
 
         ss.ignore(1, '/');
-        !std::getline(ss, token, '/');
+        std::getline(ss, token, '/');
 
         return token;
     }
