@@ -167,7 +167,8 @@ void handleClient(const int& clientFD, const struct sockaddr_in& clientAddr)
     catch (const std::exception& e)
     {
         std::cerr << "Error: " << e.what();
-        throw;
+        send(clientFD, "HTTP/1.1 400 Bad Request\r\n\r\n", 39, 0);
+        return;
     }
 
     handleResponse(clientFD, request);
