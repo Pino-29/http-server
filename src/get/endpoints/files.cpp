@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 
-namespace http::get::endpoint
+namespace http::get::endpoints
 {
     namespace fs = std::filesystem;
 

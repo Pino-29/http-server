@@ -41,15 +41,15 @@ namespace http::get
         }
         else if (endpoint == "echo")
         {
-            response = endpoint::echo(request);
+            response = endpoints::echo(request);
         }
         else if (endpoint == "user-agent")
         {
-            response = endpoint::userAgent(request);
+            response = endpoints::userAgent(request);
         }
         else if (endpoint == "files")
         {
-            response = endpoint::files(request);
+            response = endpoints::files(request);
         }
         else // random unknown path
         {

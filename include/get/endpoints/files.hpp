@@ -9,7 +9,7 @@
 
 #include <string>
 
-namespace http::get::endpoint
+namespace http::get::endpoints
 {
     std::string files(const Request& request);
 }

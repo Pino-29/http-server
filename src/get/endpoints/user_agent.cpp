@@ -10,7 +10,7 @@
 
 #include <string>
 
-namespace http::get::endpoint
+namespace http::get::endpoints
 {
     std::string userAgent(const Request& request)
     {
