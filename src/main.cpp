@@ -162,7 +162,7 @@ void handleClient(const int& clientFD, const struct sockaddr_in& clientAddr)
     try
     {
         const Buffer& buffer { readRequest(clientFD) };
-        request = std::move(http::parseRequest(buffer));
+        request = http::parseRequest(buffer);
     }
     catch (const std::exception& e)
     {
