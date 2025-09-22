@@ -2,6 +2,7 @@
 // Created by Roberto Jesus Garcia Pino on 09/09/25.
 //
 
+#include "parse_body_helper.hpp"
 #include "request.hpp"
 
 #include <algorithm>
@@ -9,7 +10,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-
 
 namespace http
 {
@@ -211,7 +211,7 @@ namespace http
         std::istringstream iss { request };
         parseLineHelper(parsedRequest, iss);
         parseHeadersHelper(parsedRequest, iss);
-        // TODO: parse body
+        parseBodyHelper(parsedRequest, iss);
         return parsedRequest;
     }
 }
