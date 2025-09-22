@@ -1,16 +1,29 @@
 cmake_minimum_required(VERSION 3.13)
-
 project(http-server-starter-cpp)
 
-file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+# --- Build Type Configuration ---
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
-set(CMAKE_CXX_STANDARD 23) # Enable the C++23 standard
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
+# --- End of Configuration ---
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Threads REQUIRED)
-find_package(ZLIB REQUIRED)
 
-add_executable(server ${SOURCE_FILES})
-target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/include)
+add_subdirectory(src/core)
+add_subdirectory(src/get)
 
-target_link_libraries(server PRIVATE Threads::Threads ZLIB::ZLIB)
+# Define the final executable
+add_executable(server src/main.cpp)
+
+target_link_libraries(server PRIVATE
+        core
+        get
+        Threads::Threads
+)
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
