@@ -47,7 +47,7 @@ namespace http
             return;
         }
 
-        request.body.reserve(contentLength);
+        request.body.resize(contentLength);
 
         if (contentLength > static_cast<size_t>(std::numeric_limits<std::streamsize>::max()))
         {
