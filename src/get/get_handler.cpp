@@ -2,7 +2,7 @@
 // Created by Roberto Jesus Garcia Pino on 09/09/25.
 //
 
-#include "get/get.hpp"
+#include "get/get_handler.hpp"
 
 #include "get/endpoints/echo.hpp"
 #include "core/request.hpp"
@@ -29,7 +29,7 @@ namespace http::get
         return token;
     }
 
-    void processRequest(const size_t& clientFD, const Request& request)
+    void handleRequest(const size_t& clientFD, const Request& request)
     {
         assert(request.method == Method::GET);
         std::string endpoint { getEndpoint(request.target) };

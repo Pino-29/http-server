@@ -1,7 +1,7 @@
 #include "core/bind_socket.hpp"
 #include "core/config.hpp"
 #include "core/create_socket.hpp"
-#include "get/get.hpp"
+#include "get/get_handler.hpp"
 #include "core/request.hpp"
 
 #include <iostream>
@@ -74,7 +74,7 @@ void handleResponse(const int& clientFD, const http::Request& request)
     // Safe & Idempotent Methods
     if (request.method == http::Method::GET)
     {
-        http::get::processRequest(clientFD, request);
+        http::get::handleRequest(clientFD, request);
     }
     else if (request.method == http::Method::HEAD)
     {
