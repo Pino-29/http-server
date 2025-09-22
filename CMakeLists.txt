@@ -16,6 +16,7 @@ find_package(Threads REQUIRED)
 
 add_subdirectory(src/core)
 add_subdirectory(src/get)
+add_subdirectory(src/post)
 
 # Define the final executable
 add_executable(server src/main.cpp)
@@ -23,6 +24,7 @@ add_executable(server src/main.cpp)
 target_link_libraries(server PRIVATE
         core
         get
+        post
         Threads::Threads
 )
 

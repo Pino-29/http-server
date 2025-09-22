@@ -3,6 +3,7 @@
 #include "core/create_socket.hpp"
 #include "get/get_handler.hpp"
 #include "core/request.hpp"
+#include "post/post_handler.hpp"
 
 #include <iostream>
 #include <netdb.h>
@@ -91,7 +92,7 @@ void handleResponse(const int& clientFD, const http::Request& request)
     }
     else if (request.method == http::Method::POST)
     {
-        // intentionally empty
+        http::post::handleRequest(clientFD, request);
     }
     else if (request.method == http::Method::PATCH)
     {
