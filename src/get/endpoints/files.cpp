@@ -4,8 +4,8 @@
 
 #include "get/endpoints/files.hpp"
 
-#include "config.hpp"
-#include "request.hpp"
+#include "core/config.hpp"
+#include "core/request.hpp"
 
 #include <filesystem>
 #include <fstream>

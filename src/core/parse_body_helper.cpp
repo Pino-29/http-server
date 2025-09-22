@@ -2,9 +2,9 @@
 // Created by Roberto Jesus Garcia Pino on 20/09/25.
 //
 
-#include "config.hpp"
-#include "parse_body_helper.hpp"
-#include "request.hpp"
+#include "core/config.hpp"
+#include "core/parse_body_helper.hpp"
+#include "core/request.hpp"
 
 #include <algorithm>
 #include <charconv>

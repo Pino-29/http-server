@@ -2,7 +2,7 @@
 // Created by Roberto Jesus Garcia Pino on 10/09/25.
 //
 
-#include "config.hpp"
+#include "core/config.hpp"
 
 #include <optional>
 #include <stdexcept>
