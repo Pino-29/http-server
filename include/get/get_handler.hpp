@@ -11,4 +11,5 @@ namespace http::get
 {
     void handleRequest(const size_t& clientFD, const Request& request);
 }
+
 #endif //HTTP_SERVER_STARTER_CPP_GET_H

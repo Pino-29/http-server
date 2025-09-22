@@ -31,27 +31,30 @@ namespace http
         HTTP_3
     };
 
-    struct Request {
-        Method method{};
-        std::string target{};
-        Version version{};
+    struct Request
+    {
+        Method method {};
+        std::string target {};
+        Version version {};
 
         // Headers: key-value pairs
-        std::unordered_map<std::string, std::string> headers{};
+        std::unordered_map<std::string, std::string> headers {};
 
         // Optional body (for POST, PUT, PATCH, etc.)
-        std::vector<char> body{};
+        std::vector<char> body {};
 
         // Optional query parameters (parsed from URI)
-        std::unordered_map<std::string, std::string> queryParams{};
+        std::unordered_map<std::string, std::string> queryParams {};
 
         // Utility: Check if a header exists
-        [[nodiscard]] bool hasHeader(const std::string& key) const {
+        [[nodiscard]] bool hasHeader(const std::string& key) const
+        {
             return headers.find(key) != headers.end();
         }
 
         // Utility: Get header value with fallback
-        [[nodiscard]] std::string getHeader(const std::string& key, const std::string& defaultValue = "") const {
+        [[nodiscard]] std::string getHeader(const std::string& key, const std::string& defaultValue = "") const
+        {
             auto it = headers.find(key);
             return it != headers.end() ? it->second : defaultValue;
         }
@@ -65,13 +68,17 @@ namespace http
     };
 
     std::string toString(const Method& method);
+
     std::string toString(const Version& version);
 
     std::ostream& operator<<(std::ostream& os, const Method& method);
+
     std::ostream& operator<<(std::ostream& os, const Version& version);
 
     Method parseMethod(const std::string& methodStr);
+
     Version parseVersion(const std::string& versionStr);
+
     Request parseRequest(const std::string& request);
 }
 

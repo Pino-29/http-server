@@ -13,4 +13,5 @@ namespace http::get::endpoints
 {
     std::string userAgent(const Request& request);
 }
+
 #endif //HTTP_SERVER_STARTER_CPP_USER_AGENT_H

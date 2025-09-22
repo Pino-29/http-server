@@ -13,4 +13,5 @@ namespace http::get::endpoints
 {
     std::string echo(const Request& request);
 }
+
 #endif //HTTP_SERVER_STARTER_CPP_ECHO_H

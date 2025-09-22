@@ -16,29 +16,33 @@ namespace sockets
     class CreateSocketException : public std::exception
     {
     public:
-        explicit CreateSocketException(std::string  msg = "Failed to create server socket") : m_message(std::move(msg)) {}
+        explicit CreateSocketException(std::string msg = "Failed to create server socket") : m_message(std::move(msg))
+        {
+        }
 
-        [[nodiscard]] const char* what() const noexcept override
+        [[nodiscard]] const char *what() const noexcept override
         {
             return m_message.c_str();
         }
 
     private:
-        std::string m_message{};
+        std::string m_message {};
     };
 
     class SetSocketException : public std::exception
     {
     public:
-        explicit SetSocketException(std::string  msg = "Failed to set socket") : m_message(std::move(msg)) {}
+        explicit SetSocketException(std::string msg = "Failed to set socket") : m_message(std::move(msg))
+        {
+        }
 
-        [[nodiscard]] const char* what() const noexcept override
+        [[nodiscard]] const char *what() const noexcept override
         {
             return m_message.c_str();
         }
 
     private:
-        std::string m_message{};
+        std::string m_message {};
     };
 
     inline int createSocket()
@@ -52,7 +56,8 @@ namespace sockets
         // Since the tester restarts your program quite often, setting SO_REUSEADDR
         // ensures that we don't run into 'Address already in use' errors
         constexpr int reuse { 1 };
-        if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+        if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0)
+        {
             throw SetSocketException();
         }
 
