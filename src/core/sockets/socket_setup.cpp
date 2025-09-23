@@ -2,10 +2,10 @@
 // Created by Roberto Jesus Garcia Pino on 22/09/25.
 //
 
-#include "core/socket_setup.hpp"
+#include "../../../include/core/sockets/socket_setup.hpp"
 
-#include "core/bind_socket.hpp"
-#include "core/create_socket.hpp"
+#include "../../../include/core/sockets/bind_socket.hpp"
+#include "../../../include/core/sockets/create_socket.hpp"
 
 #include <iostream>
 #include <stdexcept>

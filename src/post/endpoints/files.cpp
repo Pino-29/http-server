@@ -5,7 +5,7 @@
 #include "post/endpoints/files.hpp"
 
 #include "core/config.hpp"
-#include "core/request.hpp"
+#include "../../../include/core/request/request.hpp"
 
 #include <filesystem>
 #include <fstream>

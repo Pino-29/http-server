@@ -5,7 +5,7 @@
 #ifndef HTTP_SERVER_STARTER_CPP_REQUEST_PARSER_HPP
 #define HTTP_SERVER_STARTER_CPP_REQUEST_PARSER_HPP
 
-#include "core/request.hpp"
+#include "request.hpp"
 #include "core/types.hpp"
 
 #include <sstream>

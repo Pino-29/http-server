@@ -4,8 +4,8 @@
 
 #include "core/connection_handler.hpp"
 
-#include "core/request.hpp"
-#include "core/request_parser.hpp"
+#include "../../include/core/request/request.hpp"
+#include "../../include/core/request/request_parser.hpp"
 #include "get/get_handler.hpp"
 #include "post/post_handler.hpp"
 

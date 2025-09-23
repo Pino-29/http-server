@@ -5,7 +5,7 @@
 #ifndef HTTP_SERVER_STARTER_CPP_CONNECTION_HANDLER_HPP
 #define HTTP_SERVER_STARTER_CPP_CONNECTION_HANDLER_HPP
 
-#include "core/request.hpp"
+#include "request/request.hpp"
 #include "core/types.hpp"
 
 #include <netinet/in.h>

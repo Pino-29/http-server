@@ -4,7 +4,7 @@
 
 #include "get/get_handler.hpp"
 
-#include "core/request.hpp"
+#include "../../include/core/request/request.hpp"
 #include "get/endpoints/echo.hpp"
 #include "get/endpoints/files.hpp"
 #include "get/endpoints/user_agent.hpp"

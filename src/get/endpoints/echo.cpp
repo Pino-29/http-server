@@ -4,7 +4,7 @@
 
 #include "get/endpoints/echo.hpp"
 
-#include "core/request.hpp"
+#include "../../../include/core/request/request.hpp"
 
 #include <ostream>
 #include <string>

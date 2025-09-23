@@ -5,8 +5,8 @@
 #include "core/server.hpp"
 
 #include "core/connection_handler.hpp"
-#include "core/request.hpp"
-#include "core/socket_setup.hpp"
+#include "../../include/core/request/request.hpp"
+#include "../../include/core/sockets/socket_setup.hpp"
 
 #include <iostream>
 #include <netinet/in.h>

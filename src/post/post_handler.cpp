@@ -4,7 +4,7 @@
 
 #include "post/post_handler.hpp"
 
-#include "core/request.hpp"
+#include "../../include/core/request/request.hpp"
 #include "post/endpoints/files.hpp"
 
 #include <cassert>
