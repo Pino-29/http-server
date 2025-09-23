@@ -74,12 +74,6 @@ namespace http
     std::ostream& operator<<(std::ostream& os, const Method& method);
 
     std::ostream& operator<<(std::ostream& os, const Version& version);
-
-    Method parseMethod(const std::string& methodStr);
-
-    Version parseVersion(const std::string& versionStr);
-
-    Request parseRequest(const std::string& request);
 }
 
 #endif // HTTP_SERVER_STARTER_CPP_HTTP_REQUEST_H
