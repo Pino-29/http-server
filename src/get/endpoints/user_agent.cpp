@@ -4,9 +4,7 @@
 
 #include "get/endpoints/user_agent.hpp"
 
-#include <iostream>
-
-#include "../../../include/core/request.hpp"
+#include "core/request.hpp"
 
 #include <string>
 

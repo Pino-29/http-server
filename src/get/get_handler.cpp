@@ -4,16 +4,15 @@
 
 #include "get/get_handler.hpp"
 
-#include "get/endpoints/echo.hpp"
 #include "core/request.hpp"
+#include "get/endpoints/echo.hpp"
 #include "get/endpoints/files.hpp"
 #include "get/endpoints/user_agent.hpp"
 
 #include <cassert>
-#include <iostream>
+#include <sstream>
 #include <string>
 #include <sys/socket.h>
-#include <sstream>
 #include <unistd.h>
 
 namespace http::get

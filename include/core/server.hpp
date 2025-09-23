@@ -5,11 +5,7 @@
 #ifndef HTTP_SERVER_STARTER_CPP_SERVER_HPP
 #define HTTP_SERVER_STARTER_CPP_SERVER_HPP
 
-#include <core/socket_setup.hpp> // Your setup header
-#include "core/types.hpp"
-#include <netinet/in.h> // For sockaddr_in
-#include <thread>
-#include <unistd.h> // For close()
+#include "core/socket_setup.hpp"
 
 namespace http
 {

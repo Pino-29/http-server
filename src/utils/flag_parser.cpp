@@ -4,9 +4,10 @@
 
 #include "utils/flag_parser.hpp"
 
+#include "core/config.hpp"
+
 #include <iostream>
 
-#include "core/config.hpp"
 
 namespace cli
 {

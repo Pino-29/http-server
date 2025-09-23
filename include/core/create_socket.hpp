@@ -8,8 +8,8 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <string>
-#include <utility>
 #include <sys/socket.h>
+#include <utility>
 
 namespace sockets
 {

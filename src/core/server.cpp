@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <netinet/in.h>
+#include <thread>
+#include <unistd.h>
 
 namespace http
 {

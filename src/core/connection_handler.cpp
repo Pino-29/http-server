@@ -9,11 +9,11 @@
 #include "get/get_handler.hpp"
 #include "post/post_handler.hpp"
 
+#include <arpa/inet.h>   // For inet_ntoa()
 #include <iostream>
 #include <stdexcept>
-#include <unistd.h>      // For close()
 #include <sys/socket.h>  // For recv() and send()
-#include <arpa/inet.h>   // For inet_ntoa()
+#include <unistd.h>      // For close()
 
 namespace http
 {

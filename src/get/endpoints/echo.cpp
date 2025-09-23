@@ -1,12 +1,12 @@
 //
 // Created by Roberto Jesus Garcia Pino on 08/09/25.
 //
-#include "get/endpoints/echo.hpp"
 
-#include <ostream>
+#include "get/endpoints/echo.hpp"
 
 #include "core/request.hpp"
 
+#include <ostream>
 #include <string>
 
 namespace http::get::endpoints
