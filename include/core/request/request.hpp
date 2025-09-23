@@ -5,33 +5,14 @@
 #ifndef HTTP_SERVER_STARTER_CPP_HTTP_REQUEST_H
 #define HTTP_SERVER_STARTER_CPP_HTTP_REQUEST_H
 
+#include "core/http_types.hpp"
+
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace http
 {
-    enum class Method : size_t
-    {
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        HEAD,
-        OPTIONS,
-        TRACE,
-        CONNECT,
-        PATCH
-    };
-
-    enum class Version : size_t
-    {
-        HTTP_1_0,
-        HTTP_1_1,
-        HTTP_2,
-        HTTP_3
-    };
-
     struct Request
     {
         Method method {};

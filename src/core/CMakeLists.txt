@@ -5,6 +5,7 @@ add_library(core STATIC
         request/request_parser.cpp
         server.cpp
         sockets/socket_setup.cpp
+        response/response.cpp
 )
 
 target_include_directories(core PUBLIC
