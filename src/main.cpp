@@ -1,6 +1,6 @@
 #include "core/config.hpp"
 #include "core/server.hpp"
-#include "flag_parser.hpp"
+#include "utils/flag_parser.hpp"
 
 #include <iostream>
 

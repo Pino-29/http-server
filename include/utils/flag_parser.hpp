@@ -5,7 +5,7 @@
 #ifndef HTTP_SERVER_STARTER_CPP_FLAG_PARSER_HPP
 #define HTTP_SERVER_STARTER_CPP_FLAG_PARSER_HPP
 
-#include "core/config.hpp"
+#include "../core/config.hpp"
 
 #include <vector>
 #include <string_view>
