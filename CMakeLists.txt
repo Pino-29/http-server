@@ -13,6 +13,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Threads REQUIRED)
+find_package(ZLIB REQUIRED)
 
 add_subdirectory(src/core)
 add_subdirectory(src/get)

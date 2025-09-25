@@ -11,3 +11,5 @@ add_library(core STATIC
 target_include_directories(core PUBLIC
         ${CMAKE_SOURCE_DIR}/include
 )
+
+target_link_libraries(core PRIVATE ZLIB::ZLIB)
