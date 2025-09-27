@@ -4,6 +4,7 @@
 
 #include "get/get_handler.hpp"
 
+#include "core/response/apply_encoding.hpp"
 #include "get/endpoints/empty.hpp"
 #include "get/endpoints/echo.hpp"
 #include "get/endpoints/files.hpp"
@@ -40,6 +41,7 @@ namespace http::get
             response = Response(StatusCode::NotFound);
         }
 
+        applyEncoding(request, response);
         std::string responseStr = response.toString();
         send(clientFD, responseStr.c_str(), responseStr.length(), 0);
     }

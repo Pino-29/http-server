@@ -5,6 +5,7 @@ add_library(core STATIC
         request/request_parser.cpp
         server.cpp
         sockets/socket_setup.cpp
+        response/apply_encoding.cpp
         response/response.cpp
 )
 

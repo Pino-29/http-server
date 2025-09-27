@@ -4,6 +4,7 @@
 
 #include "post/post_handler.hpp"
 
+#include "core/response/apply_encoding.hpp"
 #include "../../include/core/request/request.hpp"
 #include "post/endpoints/files.hpp"
 #include "utils/get_endpoint.hpp"
@@ -38,6 +39,7 @@ namespace http::post
             response = Response(StatusCode::NotFound);
         }
 
+        applyEncoding(request, response);
         std::string responseStr = response.toString();
         send(clientFD, responseStr.c_str(), responseStr.length(), 0);
     }
