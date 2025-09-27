@@ -6,8 +6,8 @@
 
 #include "../../include/core/request/request.hpp"
 #include "../../include/core/request/request_parser.hpp"
-#include "get/get_handler.hpp"
-#include "post/post_handler.hpp"
+
+#include "handlers.hpp"
 
 #include <arpa/inet.h>   // For inet_ntoa()
 #include <iostream>
@@ -37,7 +37,7 @@ namespace http
 
     [[nodiscard]] Buffer ConnectionHandler::readRequest() const
     {
-        std::string buffer(1024, '\0'); // Fixed-size buffer
+        Buffer buffer(1024, '\0'); // Fixed-size buffer
         ssize_t bytesReceived = recv(m_socketFD, buffer.data(), buffer.size(), 0);
 
         if (bytesReceived <= 0)
@@ -54,10 +54,10 @@ namespace http
         switch (request.method)
         {
             case Method::GET:
-                get::handleRequest(m_socketFD, request);
+                getHandlerInstance().route(m_socketFD, request);
                 break;
             case Method::POST:
-                post::handleRequest(m_socketFD, request);
+                postHandlerInstance().route(m_socketFD, request);
                 break;
             default:
                 send(m_socketFD, "HTTP/1.1 501 Not Implemented\r\n\r\n", 35, 0);

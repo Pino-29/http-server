@@ -4,57 +4,43 @@
 
 #include "get/get_handler.hpp"
 
-#include "../../include/core/request/request.hpp"
+#include "get/endpoints/empty.hpp"
 #include "get/endpoints/echo.hpp"
 #include "get/endpoints/files.hpp"
 #include "get/endpoints/user_agent.hpp"
+#include "utils/get_endpoint.hpp"
 
-#include <cassert>
-#include <sstream>
-#include <string>
+#include <iostream>
+#include <string_view>
 #include <sys/socket.h>
-#include <unistd.h>
 
 namespace http::get
 {
-    std::string getEndpoint(const std::string& input)
+    GetHandler::GetHandler()
     {
-        std::stringstream ss(input);
-        std::string token {};
-
-        ss.ignore(1, '/');
-        std::getline(ss, token, '/');
-
-        return token;
+        m_routes[""] = endpoints::empty;
+        m_routes["echo"] = endpoints::echo;
+        m_routes["user-agent"] = endpoints::userAgent;
+        m_routes["files"] = endpoints::files;
     }
 
-    void handleRequest(const size_t& clientFD, const Request& request)
+    void GetHandler::route(int clientFD, const Request& request) const
     {
-        assert(request.method == Method::GET);
-        std::string endpoint { getEndpoint(request.target) };
-        std::string response {};
+        std::string endpoint = http::getEndpoint(request.target);
 
-        if (endpoint.empty())
+        Response response;
+        auto it = m_routes.find(endpoint);
+        if (it != m_routes.end())
         {
-            response = "HTTP/1.1 200 OK\r\n\r\n";
+            const EndpointHandler& handler = it->second;
+            response = handler(request);
         }
-        else if (endpoint == "echo")
+        else
         {
-            response = endpoints::echo(request);
-        }
-        else if (endpoint == "user-agent")
-        {
-            response = endpoints::userAgent(request);
-        }
-        else if (endpoint == "files")
-        {
-            response = endpoints::files(request);
-        }
-        else // random unknown path
-        {
-            response = "HTTP/1.1 404 Not Found\r\n\r\n";
+            response = Response(StatusCode::NotFound);
         }
 
-        send(clientFD, response.data(), response.size(), 0);
+        std::string responseStr = response.toString();
+        send(clientFD, responseStr.c_str(), responseStr.length(), 0);
     }
-}
+} // namespace http::get

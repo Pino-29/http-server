@@ -23,6 +23,8 @@ namespace http
     public:
         explicit Response(StatusCode status = StatusCode::OK);
 
+        Response& setStatusCode(StatusCode status);
+
         Response& setVersion(Version version);
 
         Response& addHeader(std::string_view name, std::string_view value);

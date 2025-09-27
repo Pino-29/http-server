@@ -6,12 +6,13 @@
 #define HTTP_SERVER_STARTER_CPP_USER_AGENT_H
 
 #include "../../core/request/request.hpp"
+#include "core/response/response.hpp"
 
 #include <string>
 
 namespace http::get::endpoints
 {
-    std::string userAgent(const Request& request);
+    Response userAgent(const Request& request);
 }
 
 #endif //HTTP_SERVER_STARTER_CPP_USER_AGENT_H

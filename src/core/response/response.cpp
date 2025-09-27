@@ -14,6 +14,12 @@ namespace http
     {
     }
 
+    Response& Response::setStatusCode(StatusCode status)
+    {
+        m_status = status;
+        return *this;
+    }
+
     Response& Response::setVersion(Version version)
     {
         m_version = version;

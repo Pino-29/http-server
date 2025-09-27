@@ -6,9 +6,9 @@
 #define HTTP_SERVER_STARTER_CPP_TYPES_HPP
 
 #include <cstdint> // For fixed-width integers
-#include <string>
+#include <vector>
 
-using Buffer = std::string;
+using Buffer = std::vector<char>;
 using UserID = uint64_t;
 
 #endif //HTTP_SERVER_STARTER_CPP_TYPES_HPP

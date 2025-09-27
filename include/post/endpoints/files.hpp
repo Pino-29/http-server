@@ -6,10 +6,11 @@
 #define HTTP_SERVER_STARTER_CPP_FILES_H
 
 #include "../../core/request/request.hpp"
+#include "../../core/response/response.hpp"
 
 namespace http::post::endpoints
 {
-    std::string files(const Request& request);
+    http::Response files(const Request& request);
 }
 
 #endif //HTTP_SERVER_STARTER_CPP_FILES_H

@@ -2,27 +2,27 @@
 // Created by Roberto Jesus Garcia Pino on 09/09/25.
 //
 
-#include "get/endpoints/user_agent.hpp"
+// #include "get/endpoints/user_agent.hpp"
+
+#include <iostream>
+#include <ostream>
 
 #include "../../../include/core/request/request.hpp"
+#include "../../../include/core/response/response.hpp"
 
 #include <string>
 
 namespace http::get::endpoints
 {
-    std::string userAgent(const Request& request)
+    Response userAgent(const Request& request)
     {
-        const std::string body { request.getHeader("User-Agent") };
-        std::string response {};
-        // status line
-        response += "HTTP/1.1 200 OK";
-        response += "\r\n";
-        // headers
-        response += "Content-Type: text/plain\r\n";
-        response += "Content-Length: " + std::to_string(body.size()) + "\r\n";
-        response += "\r\n";
-        // body
-        response += body;
+        const auto body { request.getHeader("User-Agent") };
+
+        Response response(StatusCode::OK);
+        response.setVersion(request.version)
+                .addHeader("Content-Type", "text/plain")
+                .setBody(body);
+
         return response;
     }
 }

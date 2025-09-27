@@ -1,5 +1,6 @@
 add_library(utils STATIC
-    flag_parser.cpp
+        flag_parser.cpp
+        get_endpoint.cpp
 )
 
 target_include_directories(utils PUBLIC

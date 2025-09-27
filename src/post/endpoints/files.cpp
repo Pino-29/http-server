@@ -6,6 +6,7 @@
 
 #include "core/config.hpp"
 #include "../../../include/core/request/request.hpp"
+#include "core/response/response.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -31,43 +32,40 @@ namespace http::post::endpoints
         return dirPath / fs::path(filename);
     }
 
-    std::string badRequest(std::string_view message)
+    Response badRequest(const Request& request, std::string_view message)
     {
-        std::ostringstream response;
-        response << "HTTP/1.1 400 Bad Request\r\n"
-                << "Content-Type: text/plain\r\n"
-                << "Content-Length: " << message.length() << "\r\n"
-                << "\r\n"
-                << message;
-        return response.str();
+        Response response(StatusCode::BadRequest);
+        response.setVersion(request.version)
+                .addHeader("Content-Type", "text/plain")
+                .setBody(message);
+        return response;
     }
 
 
-    std::string goodRequest(const fs::path& path, const Request& request)
+    Response goodRequest(const fs::path& path, const Request& request)
     {
-        std::ofstream outFile(path, std::ios::binary);
+        http::Response response;
+        response.setVersion(request.version);
 
+        std::ofstream outFile(path, std::ios::binary);
         if (!outFile)
         {
             std::string_view message = "Internal Server Error: Could not open file for writing.";
-            std::ostringstream response;
-            response << "HTTP/1.1 500 Internal Server Error\r\n"
-                    << "Content-Type: text/plain\r\n"
-                    << "Content-Length: " << message.length() << "\r\n"
-                    << "\r\n"
-                    << message;
-            return response.str();
+
+            response.setStatusCode(StatusCode::InternalServerError)
+                    .addHeader("Content-Type", "text/plain")
+                    .setBody(message);
+
+            return response;
         }
 
         std::cout << "Writing to file: " << path.string() << "\n";
         outFile.write(request.body.data(), static_cast<std::streamsize>(request.body.size()));
         outFile.close();
 
-        std::ostringstream response;
-        response << "HTTP/1.1 201 Created\r\n"
-                << "\r\n";
+        response.setStatusCode(StatusCode::Created);
 
-        return response.str();
+        return response;
     }
 
     bool isDirectoryPath(const fs::path& path)
@@ -76,7 +74,7 @@ namespace http::post::endpoints
         return filename.empty() || filename == "." || filename == "..";
     }
 
-    std::string files(const Request& request)
+    Response files(const Request& request)
     {
         std::cout << "files\n";
         const fs::path path { getFilePath(request.target) };
@@ -84,12 +82,12 @@ namespace http::post::endpoints
 
         if (isDirectoryPath(path))
         {
-            return badRequest("Target path cannot be a directory");
+            return badRequest(request, "Target path cannot be a directory");
         }
 
         if (fs::exists(path))
         {
-            return badRequest("File already exists");
+            return badRequest(request, "File already exists");
         }
 
         return goodRequest(path, request);

@@ -6,6 +6,7 @@
 
 #include "../../include/core/request/request.hpp"
 #include "post/endpoints/files.hpp"
+#include "utils/get_endpoint.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -16,36 +17,28 @@
 
 namespace http::post
 {
-    std::string getEndpoint(const std::string& input)
+    PostHandler::PostHandler()
     {
-        std::stringstream ss(input);
-        std::string token {};
-
-        ss.ignore(1, '/');
-        std::getline(ss, token, '/');
-
-        return token;
+        m_routes["files"] = endpoints::files;
     }
 
-    void handleRequest(const size_t& clientFD, const Request& request)
+    void PostHandler::route(int clientFD, const Request& request) const
     {
-        assert(request.method == Method::POST);
+        std::string endpoint = http::getEndpoint(request.target);
 
-        std::cout << "POST\n";
-        std::string endpoint { getEndpoint(request.target) };
-
-        std::cout << "Endpoint: " << endpoint << "\n";
-        std::string response {};
-
-        if (endpoint == "files")
+        Response response;
+        auto it = m_routes.find(endpoint);
+        if (it != m_routes.end())
         {
-            response = endpoints::files(request);
+            const EndpointHandler& handler = it->second;
+            response = handler(request);
         }
-        else // random unknown path
+        else
         {
-            response = "HTTP/1.1 404 Not Found\r\n\r\n";
+            response = Response(StatusCode::NotFound);
         }
 
-        send(clientFD, response.data(), response.size(), 0);
+        std::string responseStr = response.toString();
+        send(clientFD, responseStr.c_str(), responseStr.length(), 0);
     }
 }

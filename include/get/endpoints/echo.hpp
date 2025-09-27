@@ -6,12 +6,11 @@
 #define HTTP_SERVER_STARTER_CPP_ECHO_H
 
 #include "../../core/request/request.hpp"
-
-#include <string>
+#include "../../core/response/response.hpp"
 
 namespace http::get::endpoints
 {
-    std::string echo(const Request& request);
+    Response echo(const Request& request);
 }
 
 #endif //HTTP_SERVER_STARTER_CPP_ECHO_H

@@ -6,22 +6,30 @@
 
 #include "core/config.hpp"
 #include "../../../include/core/request/request.hpp"
+#include "../../../include/core/response/response.hpp"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace http::get::endpoints
 {
     namespace fs = std::filesystem;
 
-    std::string fileNotFound()
+    http::Response fileNotFound(const Request& request)
     {
-        return "HTTP/1.1 404 Not Found\r\n\r\n";
+        http::Response response(http::StatusCode::NotFound);
+
+        response.setVersion(request.version)
+                .addHeader("Content-Type", "text/plain")
+                .setBody(std::string_view("The requested resource was not found."));
+
+        return response;
     }
 
-    std::string readFileContent(const fs::path& path)
+    std::vector<char> readFileContent(const fs::path& path)
     {
         std::ifstream file(path, std::ios::in | std::ios::binary);
         if (!file)
@@ -35,33 +43,27 @@ namespace http::get::endpoints
         };
     }
 
-    std::string fileRequest(const fs::path& filepath)
+    http::Response fileRequest(const fs::path& filepath, const Request& request)
     {
-        std::string response {};
-        // status line
-        response += "HTTP/1.1 200 OK\r\n";
-        // headers
-        response += "Content-Type: application/octet-stream\r\n";
-        response += "Content-Length: " + std::to_string(fs::file_size(filepath)) + "\r\n";
-        response += "\r\n";
-        // body
-        response += readFileContent(filepath);
+        Response response(StatusCode::OK);
+        response.setVersion(request.version)
+                .addHeader("Content-Type", "application/octet-stream")
+                .setBody(readFileContent(filepath));
+
         return response;
     }
 
-    std::string directoryRequest(const fs::path& dirPath)
+    Response directoryRequest(const fs::path& dirPath, const Request& request)
     {
         std::string dirList {};
         std::cout << "📁 It's a directory: " << dirPath << "\n";
 
-        // Option 1: Serve index.html if it exists
         fs::path indexFile { dirPath / "index.html" };
         if (fs::exists(indexFile))
         {
             std::cout << "📄 Serving index file: " << indexFile << "\n";
-            return fileRequest(indexFile);
+            return fileRequest(indexFile, request);
         }
-
 
         std::cout << "📂 Listing directory contents:\n";
         for (const auto& entry: fs::directory_iterator(dirPath))
@@ -69,17 +71,10 @@ namespace http::get::endpoints
             dirList += " - " + entry.path().filename().string() + "\n";
         }
 
-        std::string response {};
-        // status line
-        response += "HTTP/1.1 200 OK\r\n";
-        // headers
-        response += "Content-Type: application/octet-stream\r\n";
-        response += "Content-Length: " + std::to_string(dirList.size()) + "\r\n";
-        response += "\r\n";
-        // body
-        response += dirList;
-
-        std::cout << "Response: " << response << "\n";
+        Response response(StatusCode::OK);
+        response.setVersion(request.version)
+                .addHeader("Content-Type", "application/octet-stream")
+                .setBody(dirList);
         return response;
     }
 
@@ -97,7 +92,7 @@ namespace http::get::endpoints
         return dirPath / fs::path(filename);
     }
 
-    std::string files(const Request& request)
+    http::Response files(const Request& request)
     {
         std::cout << "files\n";
         const fs::path path { getFilePath(request.target) };
@@ -107,16 +102,15 @@ namespace http::get::endpoints
         bool isDir { std::filesystem::is_directory(path, ec) };
         if (!ec && isDir)
         {
-            return directoryRequest(path);
+            return directoryRequest(path, request);
         }
 
         if (fs::is_regular_file(path))
         {
             std::cout << "📄 It's a file: " << path << "\n";
-            // Serve file content
-            return fileRequest(path);
+            return fileRequest(path, request);
         }
 
-        return fileNotFound();
+        return fileNotFound(request);
     }
 }
