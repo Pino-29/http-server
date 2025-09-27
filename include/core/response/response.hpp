@@ -33,7 +33,7 @@ namespace http
 
         Response& setBody(const Buffer& body);
 
-        Response& compress(Encoding encoding);
+        Response& encode(Encoding encoding);
 
         [[nodiscard]] std::string toString() const;
 

@@ -44,11 +44,11 @@ namespace http
         return *this;
     }
 
-    Response& Response::compress(Encoding encoding)
+    Response& Response::encode(Encoding encoding)
     {
         if (m_body.empty() || m_headers.contains("Content-Encoding"))
         {
-            return *this; // Nothing to compress or already compressed
+            return *this; // Nothing to encode or already encoded
         }
 
         if (encoding == Encoding::GZIP)
@@ -56,25 +56,26 @@ namespace http
             z_stream zs = {};
             if (deflateInit2(&zs, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15 + 16, 8, Z_DEFAULT_STRATEGY) != Z_OK)
             {
-                throw std::runtime_error("deflateInit2 failed while compressing.");
+                throw std::runtime_error("deflateInit2 failed while encoding.");
             }
 
             zs.next_in = reinterpret_cast<Bytef *>(m_body.data());
             zs.avail_in = m_body.size();
 
-            Buffer compressed_body;
-            compressed_body.resize(compressBound(m_body.size()));
+            Buffer encoded_body;
+            encoded_body.resize(compressBound(m_body.size()));
 
-            zs.next_out = reinterpret_cast<Bytef *>(compressed_body.data());
-            zs.avail_out = compressed_body.size();
+            zs.next_out = reinterpret_cast<Bytef *>(encoded_body.data());
+            zs.avail_out = encoded_body.size();
 
             deflate(&zs, Z_FINISH);
             deflateEnd(&zs);
 
-            compressed_body.resize(zs.total_out);
-            m_body = std::move(compressed_body);
+            encoded_body.resize(zs.total_out);
+            m_body = std::move(encoded_body);
             addHeader("Content-Encoding", "gzip");
         }
+
         return *this;
     }
 
