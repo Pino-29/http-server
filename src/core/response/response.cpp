@@ -4,6 +4,7 @@
 
 #include "../../../include/core/response/response.hpp"
 
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <zlib.h>
@@ -48,7 +49,7 @@ namespace http
     {
         if (m_body.empty() || m_headers.contains("Content-Encoding"))
         {
-            return *this; // Nothing to encode or already encoded
+            return *this;
         }
 
         if (encoding == Encoding::GZIP)
@@ -62,20 +63,34 @@ namespace http
             zs.next_in = reinterpret_cast<Bytef *>(m_body.data());
             zs.avail_in = m_body.size();
 
+            int ret;
+            char out_buffer[32768]; // A temporary 32KB chunk buffer
             Buffer encoded_body;
-            encoded_body.resize(compressBound(m_body.size()));
 
-            zs.next_out = reinterpret_cast<Bytef *>(encoded_body.data());
-            zs.avail_out = encoded_body.size();
+            do
+            {
+                zs.next_out = reinterpret_cast<Bytef *>(out_buffer);
+                zs.avail_out = sizeof(out_buffer);
 
-            deflate(&zs, Z_FINISH);
+                ret = deflate(&zs, Z_FINISH);
+
+                if (encoded_body.size() < zs.total_out)
+                {
+                    encoded_body.insert(encoded_body.end(), out_buffer,
+                                        out_buffer + (sizeof(out_buffer) - zs.avail_out));
+                }
+            } while (ret == Z_OK);
+
             deflateEnd(&zs);
 
-            encoded_body.resize(zs.total_out);
+            if (ret != Z_STREAM_END)
+            {
+                throw std::runtime_error("Compression failed with zlib error code: " + std::to_string(ret));
+            }
+
             m_body = std::move(encoded_body);
             addHeader("Content-Encoding", "gzip");
         }
-
         return *this;
     }
 
