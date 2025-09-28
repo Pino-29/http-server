@@ -19,7 +19,8 @@ namespace http
 {
     ConnectionHandler::ConnectionHandler(const int& socketFD, const sockaddr_in& clientAddr)
         : m_socketFD(socketFD),
-          m_clientAddr(clientAddr)
+          m_clientAddr(clientAddr),
+          m_isConnected(true)
     {
         std::cout << "Connection opened for client " << m_socketFD << " from "
                 << inet_ntoa(m_clientAddr.sin_addr) << ":"
@@ -49,34 +50,56 @@ namespace http
         return buffer;
     }
 
-    void ConnectionHandler::routeRequest(const Request& request) const
+    Response ConnectionHandler::routeRequest(const Request& request) const
     {
         switch (request.method)
         {
             case Method::GET:
-                getHandlerInstance().route(m_socketFD, request);
-                break;
+                return getHandlerInstance().route(request);
             case Method::POST:
-                postHandlerInstance().route(m_socketFD, request);
-                break;
+                return postHandlerInstance().route(request);
             default:
-                send(m_socketFD, "HTTP/1.1 501 Not Implemented\r\n\r\n", 35, 0);
-                break;
+                return Response(StatusCode::NotImplemented);
         }
     }
 
     void ConnectionHandler::handle()
     {
-        try
+        while (m_isConnected)
         {
-            const auto buffer = readRequest();
-            const auto request = RequestParser(buffer).parse();
-            routeRequest(request);
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Error handling client " << m_socketFD << ": " << e.what() << std::endl;
-            send(m_socketFD, "HTTP/1.1 400 Bad Request\r\n\r\n", 26, 0);
+            try
+            {
+                const auto buffer = readRequest();
+                if (buffer.empty())
+                {
+                    // Client closed the connection gracefully
+                    break;
+                }
+
+                const auto request = RequestParser(buffer).parse();
+
+                if (request.getHeader("Connection") == "close")
+                {
+                    m_isConnected = false;
+                }
+
+                std::cout << "Creating response" << std::endl;
+                Response response = routeRequest(request);
+                std::cout << "Response completed" << std::endl;
+
+                if (!m_isConnected)
+                {
+                    response.addHeader("Connection", "close");
+                }
+
+                std::string responseStr = response.toString();
+                send(m_socketFD, responseStr.data(), responseStr.size(), 0);
+            }
+            catch (const std::exception& e)
+            {
+                std::cerr << "Error with client " << m_socketFD << ": " << e.what() << std::endl;
+                break;
+            }
         }
     }
 }

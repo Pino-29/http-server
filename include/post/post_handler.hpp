@@ -19,7 +19,7 @@ namespace http::post
 
         explicit PostHandler(const EndpointHandler& handler);
 
-        void route(int clientFD, const Request& request) const;
+        Response route(const Request& request) const;
 
     private:
         std::unordered_map<std::string, EndpointHandler> m_routes;

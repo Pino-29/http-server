@@ -23,7 +23,7 @@ namespace http::post
         m_routes["files"] = endpoints::files;
     }
 
-    void PostHandler::route(int clientFD, const Request& request) const
+    Response PostHandler::route(const Request& request) const
     {
         std::string endpoint = http::getEndpoint(request.target);
 
@@ -40,7 +40,6 @@ namespace http::post
         }
 
         applyEncoding(request, response);
-        std::string responseStr = response.toString();
-        send(clientFD, responseStr.c_str(), responseStr.length(), 0);
+        return response;
     }
 }

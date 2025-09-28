@@ -25,7 +25,7 @@ namespace http::get
         m_routes["files"] = endpoints::files;
     }
 
-    void GetHandler::route(int clientFD, const Request& request) const
+    Response GetHandler::route(const Request& request) const
     {
         std::string endpoint = http::getEndpoint(request.target);
 
@@ -42,7 +42,6 @@ namespace http::get
         }
 
         applyEncoding(request, response);
-        std::string responseStr = response.toString();
-        send(clientFD, responseStr.c_str(), responseStr.length(), 0);
+        return response;
     }
 } // namespace http::get

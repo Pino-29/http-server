@@ -4,14 +4,18 @@
 
 #include "core/server.hpp"
 
+
 #include "core/connection_handler.hpp"
 #include "../../include/core/request/request.hpp"
 #include "../../include/core/sockets/socket_setup.hpp"
 
+#include <cassert>
 #include <iostream>
 #include <netinet/in.h>
 #include <thread>
+#include <tuple>
 #include <unistd.h>
+#include <unordered_map>
 
 namespace http
 {
@@ -29,19 +33,6 @@ namespace http
         if (m_serverFD != -1)
         {
             close(m_serverFD);
-        }
-    }
-
-    void handleConnectionThread(int clientFD, sockaddr_in clientAddr)
-    {
-        try
-        {
-            http::ConnectionHandler handler(clientFD, clientAddr);
-            handler.handle();
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Unhandled exception in client thread: " << e.what() << std::endl;
         }
     }
 
@@ -63,7 +54,18 @@ namespace http
                 continue;
             }
 
-            std::thread(handleConnectionThread, clientFD, clientAddr).detach();
+            std::thread([clientFD, clientAddr]()
+            {
+                try
+                {
+                    http::ConnectionHandler handler(clientFD, clientAddr);
+                    handler.handle();
+                }
+                catch (const std::exception& e)
+                {
+                    std::cerr << "Exception in client thread: " << e.what() << std::endl;
+                }
+            }).detach();
         }
     }
 }

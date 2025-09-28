@@ -6,6 +6,7 @@
 #define HTTP_SERVER_STARTER_CPP_CONNECTION_HANDLER_HPP
 
 #include "request/request.hpp"
+#include "response/response.hpp"
 #include "core/types.hpp"
 
 #include <netinet/in.h>
@@ -31,10 +32,11 @@ namespace http
     private:
         int m_socketFD;
         sockaddr_in m_clientAddr;
+        bool m_isConnected;
 
         [[nodiscard]] Buffer readRequest() const;
 
-        void routeRequest(const Request& request) const;
+        http::Response routeRequest(const Request& request) const;
     };
 }
 
